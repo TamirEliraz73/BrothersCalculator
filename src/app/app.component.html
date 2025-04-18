@@ -1,53 +1,78 @@
-<div class="input-group">
-  <label>
-    Min:
-    <input [(ngModel)]="min" (ngModelChange)="updateNumbers()" type="number" step="any">
-  </label>
+<div class="mbody">
+  <div style="margin: 5px;">
+    <button (click)="setInformation()" style="cursor: pointer;">{{ !info ? labels.open : labels.close }} {{labels.help}}</button>
+    <button class="lang-toggle" (click)="toggleLanguage()" style="position: absolute;">
+      <img [src]="currentLang === 'he' ? 'assets/flags/en.png' : 'assets/flags/il.png'" alt="Language Flag" width="15px">
+      {{ currentLang === 'he' ? 'English' : 'עברית' }}
+    </button>
+    <div class=""></div>
+    <div class="info-box" *ngIf="info">
+      <h3>{{labels.infoTitle}}</h3>
+      <ul>
+        <li><strong>#</strong>: The index of the row (starting from 1).</li>
+        <li><strong>Value</strong>: A number between <code>min</code> and <code>max</code>, spaced by <code>step</code>.</li>
+        <li><strong>Div Value by X</strong>: The result of dividing the value by <code>x</code>.</li>
+        <li><strong>Mod X by Value</strong>: The result of <code>x % value</code> (modulus operation).</li>
+      </ul>
+      <p>{{labels.sortInstruction}}</p>
+    </div>
+  </div>
+  <div class="input-group">
+    <label>
+      {{labels.min}}:
+      <input [(ngModel)]="min" (ngModelChange)="updateNumbers()" type="number" step="any">
+    </label>
 
-  <label>
-    Max:
-    <input [(ngModel)]="max" (ngModelChange)="updateNumbers()" type="number" step="any">
-  </label>
+    <label>
+      {{labels.max}}:
+      <input [(ngModel)]="max" (ngModelChange)="updateNumbers()" type="number" step="any">
+    </label>
 
-  <label>
-    Step:
-    <input [(ngModel)]="step" (ngModelChange)="updateNumbers()" type="number" step="any">
-  </label>
+    <label>
+      {{labels.step}}:
+      <input [(ngModel)]="step" (ngModelChange)="updateNumbers()" type="number" step="any">
+    </label>
 
-  <label>
-    X:
-    <input [(ngModel)]="x" (ngModelChange)="updateNumbers()" type="number" step="any">
-  </label>
-
-  <!--  <label>-->
-  <!--    Mod Base:-->
-  <!--    <input [(ngModel)]="modBase" (ngModelChange)="updateNumbers()" type="number" step="any">-->
-  <!--  </label>-->
+    <label>
+      X:
+      <input [(ngModel)]="x" (ngModelChange)="updateNumbers()" type="number" step="any">
+    </label>
+  </div>
+  <div class="input-group">
+    <button (click)="setDefaultValues()" style="cursor: pointer;">{{labels.resetDefaults}}</button>
+    <button (click)="unSort()" style="cursor: pointer;">{{labels.cancelSorts}}</button>
+    <div *ngIf="x == 0" style="background: red">
+      {{labels.errorMsg}}
+    </div>
+  </div>
+  <table border="1" style="border-collapse: collapse; margin-top: 1em;">
+    <thead>
+    <tr>
+      <th (click)="sortById()" style="cursor: pointer;">
+        #
+        <span *ngIf="sorts.id !== null">{{ sorts.id ? '↑' : '↓' }}</span>
+      </th>
+      <th (click)="sortByValue()" style="cursor: pointer;">
+        {{labels.value}}
+        <span *ngIf="sorts.value !== null">{{ sorts.value ? '↑' : '↓' }}</span>
+      </th>
+      <th (click)="sortByDiv()" style="cursor: pointer;">
+        {{labels.divValue}}
+        <span *ngIf="sorts.div !== null">{{ sorts.div ? '↑' : '↓' }}</span>
+      </th>
+      <th (click)="sortByMod()" style="cursor: pointer;">
+        {{labels.modValue}}
+        <span *ngIf="sorts.mod !== null">{{ sorts.mod ? '↑' : '↓' }}</span>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let num of numbers; let i = index">
+      <td>{{ num.id }}</td>
+      <td>{{ num.value }}</td>
+      <td>{{ num.div }}</td>
+      <td>{{ num.mod }}</td>
+    </tr>
+    </tbody>
+  </table>
 </div>
-<p>Hello, {{ min }} {{ max }}!</p>
-<div *ngIf="x == 0" style="background: red">
-  One cannot divide by zero.
-</div>
-<table border="1" style="border-collapse: collapse; margin-top: 1em;">
-  <thead>
-  <tr>
-    <th>#</th>
-    <th>Value</th>
-    <th>Div Value by {{ x }}</th>
-    <th (click)="sortByMod()" style="cursor: pointer;">
-      Mod {{ x }} by Value
-      <span *ngIf="sortAscending !== null">
-    {{ sortAscending ? '↑' : '↓' }}
-  </span>
-    </th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let num of numbers; let i = index">
-    <td>{{ i + 1 }}</td>
-    <td>{{ num.value }}</td>
-    <td>{{ num.div }}</td>
-    <td>{{ num.mod }}</td>
-  </tr>
-  </tbody>
-</table>
